@@ -7,13 +7,13 @@ const pool = new Pool({
   database: 'bootcampx'
 });
 const args = process.argv.slice(2);
-pool.query(`
+const queryString = `
 SELECT students.id as id, students.name as name, cohorts.name as cohort 
 FROM students
 JOIN cohorts ON students.cohort_id = cohorts.id
-WHERE cohorts.name LIKE '${args[0]}%'
-LIMIT '${args[1]}';
-`)
+WHERE cohorts.name LIKE $1
+LIMIT $2`;
+pool.query(queryString,[`${args[0]}%`,args[1]])
   .then(res => {
     for (const row of res.rows) {
       console.log(`${row.name} has an id of ${row.id} and was in the ${row.cohort} cohort`);
